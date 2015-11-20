@@ -65,3 +65,54 @@ summary(aov(formula = Segmentation_ParenchymToVolume~Diabetes, data = ship_valid
 ```
 
 Diabetes shows a significant correlation with parenchyma tissue with an F value o 12.8 and a p value of 0.0003.
+
+## ANOVA of `Parenchyma Tissue` and `Hormone Replacement Therapy`
+
+At first, visualize the means and draw the box plots.
+
+```{r}
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by hormone replacement therapy", xlab="hormone replacement therapy", ylab="parenchyma tissue")
+
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, main="parenchyma tissue by hormone replacement therapy (mean is black dot)", xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
+```
+
+As before, remove the error dimensions and conduct the ANOVA.
+
+```{r}
+ship_valid_hormone <- filter(ship, !(as.character(Women_Hormone_Replacement_Therapy)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
+ship_valid_hormone <- droplevels(ship_valid_hormone)
+
+plotmeans(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by hormone replacement therapy", xlab="hormone replacement therapy", ylab="parenchyma tissue")
+
+boxplot(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, main="parenchyma tissue by hormone replacement therapy (mean is black dot)", xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~Women_Hormone_Replacement_Therapy, data = ship_valid_hormone))
+```
+
+## ANOVA for `Parenchyma Tissue` and `Mammography Finding Classification`
+
+The `mammography finding classification` feature is categorical and defined individual for both breasts. Therfore, the ANOVA is conducted for both the left and the right feature. At first, plot both features.
+
+```{r}
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+```
+
+Now remove the invalid dimensions from both features and conduct the analysis.
+
+```{r}
+ship_valid_mammography <- filter(ship, !(as.character(Mammography_Right_BI_RADS)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
+ship_valid_mammography <- droplevels(ship_valid_mammography)
+
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Left_BI_RADS, data = ship_valid_mammography))
+summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_BI_RADS, data = ship_valid_mammography))
+```
