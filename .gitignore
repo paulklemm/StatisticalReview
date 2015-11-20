@@ -11,3 +11,7 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
+# R and packrat related files
+.RData
+packrat/lib*/

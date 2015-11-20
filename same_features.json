@@ -1,0 +1,737 @@
+{
+    "zz_nr": {
+        "name_t0": "zz_nr",
+        "name_s2": "zz_nr",
+        "newName": "zz_nr"
+    },
+    "EXLOC_SHIP_T0": {
+        "name_t0": "EXLOC_SHIP_T0",
+        "name_s2": "EXLOC_SHIP2",
+        "newName": "Examine_Location"
+    },
+    "GEBURTSTAG_SHIP_T0": {
+        "name_t0": "GEBURTSTAG_SHIP_T0",
+        "name_s2": "GEBURTSTAG_SHIP2",
+        "newName": "GEBURTSTAG"
+    },
+    "SEX_SHIP_T0": {
+        "name_t0": "SEX_SHIP_T0",
+        "name_s2": "SEX_SHIP2",
+        "newName": "SEX"
+    },
+    "EXDATE_SHIP_T0": {
+        "name_t0": "EXDATE_SHIP_T0",
+        "name_s2": "EXDATE_SHIP2",
+        "newName": "Examine_date"
+    },
+    "AGE_SHIP_T0": {
+        "name_t0": "AGE_SHIP_T0",
+        "name_s2": "AGE_SHIP2",
+        "newName": "Age"
+    },
+    "T0_BELAST_01": {
+        "name_t0": "T0_BELAST_01",
+        "name_s2": "S2_BELAST_01",
+        "newName": "Schwerarbeit"
+    },
+    "T0_BELAST_02": {
+        "name_t0": "T0_BELAST_02",
+        "name_s2": "S2_BELAST_02",
+        "newName": "Schwerarbeit_Dauer_Jahre"
+    },
+    "T0_BELAST_12": {
+        "name_t0": "T0_BELAST_12",
+        "name_s2": "S2_BELAST_12",
+        "newName": "Ganzkoerperschwingungen"
+    },
+    "T0_BELAST_13": {
+        "name_t0": "T0_BELAST_13",
+        "name_s2": "S2_BELAST_13",
+        "newName": "Ganzkoerperschwingungen_Dauer_Jahre"
+    },
+    "T0_BEWE_01": {
+        "name_t0": "T0_BEWE_01",
+        "name_s2": "S2_BEWE_01",
+        "newName": "Sport_Winter"
+    },
+    "T0_BEWE_02": {
+        "name_t0": "T0_BEWE_02",
+        "name_s2": "S2_BEWE_02",
+        "newName": "Sport_Sommer"
+    },
+    "T0_BEWE_04": {
+        "name_t0": "T0_BEWE_04",
+        "name_s2": "S2_BEWE_03",
+        "newName": "Haltung_Hautpbeschaeftigung"
+    },
+    "T0_CHRO_01": {
+        "name_t0": "T0_CHRO_01",
+        "name_s2": "S2_CHRO_02A",
+        "newName": "Thrombose_Krampfadern_Venenentzuendung"
+    },
+    "T0_CHRO_02": {
+        "name_t0": "T0_CHRO_02",
+        "name_s2": "S2_CHRO_03A",
+        "newName": "Akne"
+    },
+    "T0_CHRO_03": {
+        "name_t0": "T0_CHRO_03",
+        "name_s2": "S2_CHRO_04A",
+        "newName": "Nierenerkrankung"
+    },
+    "T0_CHRO_03A": {
+        "name_t0": "T0_CHRO_03A",
+        "name_s2": "S2_CHRO_04B",
+        "newName": "Dialyse"
+    },
+    "T0_CHRO_04": {
+        "name_t0": "T0_CHRO_04",
+        "name_s2": "S2_CHRO_05A",
+        "newName": "Hypotonie"
+    },
+    "T0_CHRO_05": {
+        "name_t0": "T0_CHRO_05",
+        "name_s2": "S2_CHRO_06A",
+        "newName": "Gelenkverschleiss"
+    },
+    "T0_CHRO_06": {
+        "name_t0": "T0_CHRO_06",
+        "name_s2": "S2_CHRO_07A",
+        "newName": "Abnutzungserscheinungen_Wirbelsaule"
+    },
+    "T0_CHRO_07": {
+        "name_t0": "T0_CHRO_07",
+        "name_s2": "S2_CHRO_08A",
+        "newName": "Gelenkerkrankung"
+    },
+    "T0_CHRO_08": {
+        "name_t0": "T0_CHRO_08",
+        "name_s2": "S2_CHRO_09A",
+        "newName": "Osteoporose"
+    },
+    "T0_CHRO_09": {
+        "name_t0": "T0_CHRO_09",
+        "name_s2": "S2_CHRO_12A",
+        "newName": "Leberzirrhose"
+    },
+    "T0_CHRO_10": {
+        "name_t0": "T0_CHRO_10",
+        "name_s2": "S2_CHRO_13A",
+        "newName": "Hepatitis"
+    },
+    "T0_CHRO_11": {
+        "name_t0": "T0_CHRO_11",
+        "name_s2": "S2_CHRO_14A",
+        "newName": "Fettleber"
+    },
+    "T0_CHRO_12": {
+        "name_t0": "T0_CHRO_12",
+        "name_s2": "S2_CHRO_15A",
+        "newName": "Gallenblasenentzuendung"
+    },
+    "T0_CHRO_13": {
+        "name_t0": "T0_CHRO_13",
+        "name_s2": "S2_CHRO_16A",
+        "newName": "Erhoehtes_Blutfett"
+    },
+    "T0_CHRO_14": {
+        "name_t0": "T0_CHRO_14",
+        "name_s2": "S2_CHRO_17A",
+        "newName": "Gicht"
+    },
+    "T0_CHRO_15": {
+        "name_t0": "T0_CHRO_15",
+        "name_s2": "S2_CHRO_18A",
+        "newName": "Harnwegserkrankung"
+    },
+    "T0_CHRO_16": {
+        "name_t0": "T0_CHRO_16",
+        "name_s2": "S2_CHRO_19A",
+        "newName": "Parkinson"
+    },
+    "T0_CHRO_18": {
+        "name_t0": "T0_CHRO_18",
+        "name_s2": "S2_CHRO_20A",
+        "newName": "Andere_Krankheiten"
+    },
+    "T0_CHRO_19": {
+        "name_t0": "T0_CHRO_19",
+        "name_s2": "S2_CHRO_22A",
+        "newName": "Bronchitis"
+    },
+    "T0_DIAB_01": {
+        "name_t0": "T0_DIAB_01",
+        "name_s2": "S2_DIAB_01",
+        "newName": "Diabetis"
+    },
+    "T0_DIAB_02": {
+        "name_t0": "T0_DIAB_02",
+        "name_s2": "S2_DIAB_02",
+        "newName": "Diabetis_Behandlung"
+    },
+    "T0_FRAU_01": {
+        "name_t0": "T0_FRAU_01",
+        "name_s2": "S2_FRAU_01",
+        "newName": "Bereits_Schwanger"
+    },
+    "T0_FRAU_03": {
+        "name_t0": "T0_FRAU_03",
+        "name_s2": "S2_FRAU_03",
+        "newName": "Kinderanzahl"
+    },
+    "T0_FRAU_10": {
+        "name_t0": "T0_FRAU_10",
+        "name_s2": "S2_FRAU_10",
+        "newName": "Alter_Regelblutung"
+    },
+    "T0_FRAU_14": {
+        "name_t0": "T0_FRAU_14",
+        "name_s2": "S2_FRAU_14",
+        "newName": "Hormonersatztherapie"
+    },
+    "T0_FRAU_16": {
+        "name_t0": "T0_FRAU_16",
+        "name_s2": "S2_FRAU_16",
+        "newName": "Bereits_Regelblutungen"
+    },
+    "T0_FRAU_17": {
+        "name_t0": "T0_FRAU_17",
+        "name_s2": "S2_FRAU_17",
+        "newName": "Alter_ende_Regelblutungen"
+    },
+    "T0_KHK_01": {
+        "name_t0": "T0_KHK_01",
+        "name_s2": "S2_KHK_01",
+        "newName": "Blutdruck_hoch"
+    },
+    "T0_KHK_02": {
+        "name_t0": "T0_KHK_02",
+        "name_s2": "S2_KHK_02",
+        "newName": "Blutdruck_hoch_medikamente"
+    },
+    "T0_LUNGE_01": {
+        "name_t0": "T0_LUNGE_01",
+        "name_s2": "S2_LUNGE_01",
+        "newName": "Lungenerkrankung"
+    },
+    "T0_SCHILD_01": {
+        "name_t0": "T0_SCHILD_01",
+        "name_s2": "S2_SCHILD_01",
+        "newName": "Schilddruesenerkrankung"
+    },
+    "T0_SCHILD_02A": {
+        "name_t0": "T0_SCHILD_02A",
+        "name_s2": "S2_SCHILD_02A",
+        "newName": "Schilddruese_Ueberfunktion"
+    },
+    "T0_SCHILD_02B": {
+        "name_t0": "T0_SCHILD_02B",
+        "name_s2": "S2_SCHILD_02C",
+        "newName": "Schilddruese_Unterfunktion"
+    },
+    "T0_SCHILD_02C": {
+        "name_t0": "T0_SCHILD_02C",
+        "name_s2": "S2_SCHILD_02E",
+        "newName": "Schilddruese_Struma"
+    },
+    "T0_SCHILD_02D": {
+        "name_t0": "T0_SCHILD_02D",
+        "name_s2": "S2_SCHILD_02G",
+        "newName": "Schilddruese_Knoten"
+    },
+    "T0_SCHILD_02E": {
+        "name_t0": "T0_SCHILD_02E",
+        "name_s2": "S2_SCHILD_02I",
+        "newName": "Schilddruese_andere"
+    },
+    "T0_SCHMERZ_01": {
+        "name_t0": "T0_SCHMERZ_01",
+        "name_s2": "S2_SCHMERZ_01",
+        "newName": "Schmerzen_7Tage"
+    },
+    "T0_SCHMERZ_03": {
+        "name_t0": "T0_SCHMERZ_03",
+        "name_s2": "S2_SCHMERZ_03",
+        "newName": "Rueckenschmerz_3Monate"
+    },
+    "T0_SCHMERZ_04": {
+        "name_t0": "T0_SCHMERZ_04",
+        "name_s2": "S2_SCHMERZ_04",
+        "newName": "Rueckenschmerz_3Monate_staerke"
+    },
+    "T0_SOZIO_12": {
+        "name_t0": "T0_SOZIO_12",
+        "name_s2": "S2_SOZIO_09",
+        "newName": "Vorzeitiger_Ruhestand_Grund"
+    },
+    "T0_SOZIO_22A": {
+        "name_t0": "T0_SOZIO_22A",
+        "name_s2": "S2_SOZIO_13",
+        "newName": "Beruf"
+    },
+    "T0_SOZIO_41": {
+        "name_t0": "T0_SOZIO_41",
+        "name_s2": "S2_SOZIO_14",
+        "newName": "Einkommen"
+    },
+    "BIA_KOERPERFETT_KORR_IN_KG": {
+        "name_t0": "BIA_KOERPERFETT_KORR_IN_KG",
+        "name_s2": "BIA_KOERPERFETT_KORR_IN_KG",
+        "newName": "BIA_KOERPERFETT_KORR_IN_KG"
+    },
+    "BIA_KOERPERFETT_KORR_IN_PROZ": {
+        "name_t0": "BIA_KOERPERFETT_KORR_IN_PROZ",
+        "name_s2": "BIA_KOERPERFETT_KORR_IN_PROZ",
+        "newName": "BIA_KOERPERFETT_KORR_IN_PROZ"
+    },
+    "SOM_GROE": {
+        "name_t0": "SOM_GROE",
+        "name_s2": "SOM_GROE",
+        "newName": "Groesse"
+    },
+    "SOM_GEW": {
+        "name_t0": "SOM_GEW",
+        "name_s2": "SOM_GEW",
+        "newName": "Gewicht"
+    },
+    "SOM_TAIL": {
+        "name_t0": "SOM_TAIL",
+        "name_s2": "SOM_TAIL",
+        "newName": "Tailienumfang"
+    },
+    "SOM_HUEF": {
+        "name_t0": "SOM_HUEF",
+        "name_s2": "SOM_HUEF",
+        "newName": "Hueftumfang"
+    },
+    "GES_BL_13": {
+        "name_t0": "GES_BL_13",
+        "name_s2": "GES_BL_13",
+        "newName": "Rueckenschmerz_Sozialprobleme"
+    },
+    "GES_BL_23": {
+        "name_t0": "GES_BL_23",
+        "name_s2": "GES_BL_23",
+        "newName": "Nacken_Schulterschmerzen"
+    },
+    "GES_BL_33": {
+        "name_t0": "GES_BL_33",
+        "name_s2": "GES_BL_33",
+        "newName": "Gelenk_Gliederschmerzen"
+    },
+    "T0_ALKO_02": {
+        "name_t0": "T0_ALKO_02",
+        "name_s2": "S2_ALKO_02",
+        "newName": "Haeufigkeit_Alkohol_12Monate"
+    },
+    "T0_ALKO_03": {
+        "name_t0": "T0_ALKO_03",
+        "name_s2": "S2_ALKO_03",
+        "newName": "Wenn_Alkohol_wie_viel"
+    },
+    "T0_BGL_02": {
+        "name_t0": "T0_BGL_02",
+        "name_s2": "S2_BGL_02",
+        "newName": "Gallenblasensteine"
+    },
+    "T0_BGL_05": {
+        "name_t0": "T0_BGL_05",
+        "name_s2": "S2_BGL_05",
+        "newName": "Pankreatitis"
+    },
+    "T0_BGL_06": {
+        "name_t0": "T0_BGL_06",
+        "name_s2": "S2_BGL_06",
+        "newName": "Pankreatitis_chronisch"
+    },
+    "T0_ERNAEHR_01": {
+        "name_t0": "T0_ERNAEHR_01",
+        "name_s2": "S2_ERNAEHR_01",
+        "newName": "Ernaehrung_Fleisch"
+    },
+    "T0_ERNAEHR_02": {
+        "name_t0": "T0_ERNAEHR_02",
+        "name_s2": "S2_ERNAEHR_02",
+        "newName": "Ernaehrung_Wurst"
+    },
+    "T0_ERNAEHR_03": {
+        "name_t0": "T0_ERNAEHR_03",
+        "name_s2": "S2_ERNAEHR_03",
+        "newName": "Ernaehrung_Fisch"
+    },
+    "T0_ERNAEHR_04": {
+        "name_t0": "T0_ERNAEHR_04",
+        "name_s2": "S2_ERNAEHR_04",
+        "newName": "Ernaehrung_Kartoffeln"
+    },
+    "T0_ERNAEHR_05": {
+        "name_t0": "T0_ERNAEHR_05",
+        "name_s2": "S2_ERNAEHR_05",
+        "newName": "Ernaehrung_Pommes"
+    },
+    "T0_ERNAEHR_06": {
+        "name_t0": "T0_ERNAEHR_06",
+        "name_s2": "S2_ERNAEHR_06",
+        "newName": "Ernaehrung_Teigwaren"
+    },
+    "T0_ERNAEHR_07": {
+        "name_t0": "T0_ERNAEHR_07",
+        "name_s2": "S2_ERNAEHR_07",
+        "newName": "Ernaehrung_Reis"
+    },
+    "T0_ERNAEHR_08": {
+        "name_t0": "T0_ERNAEHR_08",
+        "name_s2": "S2_ERNAEHR_08",
+        "newName": "Ernaehrung_Gemuese"
+    },
+    "T0_ERNAEHR_09": {
+        "name_t0": "T0_ERNAEHR_09",
+        "name_s2": "S2_ERNAEHR_09",
+        "newName": "Ernaehrung_Gemuese_gekocht"
+    },
+    "T0_ERNAEHR_10": {
+        "name_t0": "T0_ERNAEHR_10",
+        "name_s2": "S2_ERNAEHR_10",
+        "newName": "Ernaehrung_Obst"
+    },
+    "T0_ERNAEHR_11": {
+        "name_t0": "T0_ERNAEHR_11",
+        "name_s2": "S2_ERNAEHR_11",
+        "newName": "Ernaehrung_Brot"
+    },
+    "T0_ERNAEHR_12": {
+        "name_t0": "T0_ERNAEHR_12",
+        "name_s2": "S2_ERNAEHR_12",
+        "newName": "Ernaehrung_Muesli"
+    },
+    "T0_ERNAEHR_13": {
+        "name_t0": "T0_ERNAEHR_13",
+        "name_s2": "S2_ERNAEHR_13",
+        "newName": "Ernaehrung_Eier"
+    },
+    "T0_ERNAEHR_14": {
+        "name_t0": "T0_ERNAEHR_14",
+        "name_s2": "S2_ERNAEHR_14",
+        "newName": "Ernaehrung_Kuchen"
+    },
+    "T0_ERNAEHR_15": {
+        "name_t0": "T0_ERNAEHR_15",
+        "name_s2": "S2_ERNAEHR_15",
+        "newName": "Ernaehrung_Suesswaren"
+    },
+    "T0_ERNAEHR_16": {
+        "name_t0": "T0_ERNAEHR_16",
+        "name_s2": "S2_ERNAEHR_16",
+        "newName": "Ernaehrung_Knabbereien"
+    },
+    "T0_HERZ_01": {
+        "name_t0": "T0_HERZ_01",
+        "name_s2": "S2_HERZ_01",
+        "newName": "Herzinsuffizienz"
+    },
+    "T0_RAU_04": {
+        "name_t0": "T0_RAU_04",
+        "name_s2": "S2_RAU_05",
+        "newName": "Anzahl_Zigaretten"
+    },
+    "T0_RAU_06": {
+        "name_t0": "T0_RAU_06",
+        "name_s2": "S2_RAU_07",
+        "newName": "Alter_Beginn_Zigaretten"
+    },
+    "T0_RAU_08A": {
+        "name_t0": "T0_RAU_08A",
+        "name_s2": "S2_RAU_09",
+        "newName": "Alter_Ende_Zigaretten"
+    },
+    "T0_SOZIO_03": {
+        "name_t0": "T0_SOZIO_03",
+        "name_s2": "S2_SOZIO_03",
+        "newName": "Familienstand"
+    },
+    "T0_SOZIO_04": {
+        "name_t0": "T0_SOZIO_04",
+        "name_s2": "S2_SOZIO_04",
+        "newName": "Zusammenleben_Partner"
+    },
+    "HBA1C": {
+        "name_t0": "HBA1C",
+        "name_s2": "HBA1C",
+        "newName": "HBA1C"
+    },
+    "TG_S": {
+        "name_t0": "TG_S",
+        "name_s2": "TG_S",
+        "newName": "Triglyceride"
+    },
+    "CHOL_S": {
+        "name_t0": "CHOL_S",
+        "name_s2": "CHOL_S",
+        "newName": "Cholesterol"
+    },
+    "LDLCH": {
+        "name_t0": "LDLCH",
+        "name_s2": "LDLCH",
+        "newName": "LDL_Cholesterol"
+    },
+    "HDLCH": {
+        "name_t0": "HDLCH",
+        "name_s2": "HDLCH",
+        "newName": "HDL_Cholesterol"
+    },
+    "ALAT_S": {
+        "name_t0": "ALAT_S",
+        "name_s2": "ALAT_S",
+        "newName": "ALAT_S"
+    },
+    "ASAT_S": {
+        "name_t0": "ASAT_S",
+        "name_s2": "ASAT_S",
+        "newName": "ASAT_S"
+    },
+    "AMYL_S": {
+        "name_t0": "AMYL_S",
+        "name_s2": "AMYL_S",
+        "newName": "AMYL_S"
+    },
+    "GGT_S": {
+        "name_t0": "GGT_S",
+        "name_s2": "GGT_S",
+        "newName": "GGT_S"
+    },
+    "LIP_S": {
+        "name_t0": "LIP_S",
+        "name_s2": "LIP_S",
+        "newName": "LIP_S"
+    },
+    "INFEKT_HIV": {
+        "name_t0": "INFEKT_HIV",
+        "name_s2": "INFEKT_HIV",
+        "newName": "HIV"
+    },
+    "INFEKT_HEPB": {
+        "name_t0": "INFEKT_HEPB",
+        "name_s2": "INFEKT_HEPB",
+        "newName": "HepatitisB"
+    },
+    "INFEKT_HEPC": {
+        "name_t0": "INFEKT_HEPC",
+        "name_s2": "INFEKT_HEPC",
+        "newName": "HepatitisC"
+    },
+    "T0_SCHMERZ_02N": {
+        "name_t0": "T0_SCHMERZ_02N",
+        "name_s2": "S2_SCHMERZ_02N",
+        "newName": "Schmerz_Beine"
+    },
+    "T0_SCHMERZ_02P": {
+        "name_t0": "T0_SCHMERZ_02P",
+        "name_s2": "S2_SCHMERZ_02P",
+        "newName": "Schmerz_Fuesse"
+    },
+    "T0_SCHMERZ_05": {
+        "name_t0": "T0_SCHMERZ_05",
+        "name_s2": "S2_SCHMERZ_05",
+        "newName": "Rueckenschmerz_Tageinaktiv"
+    },
+    "T0_SCHMERZ_06": {
+        "name_t0": "T0_SCHMERZ_06",
+        "name_s2": "S2_SCHMERZ_06",
+        "newName": "Beeintraechtigung_Rueckenschmerz_3Monate"
+    },
+    "T0_SCHMERZ_07": {
+        "name_t0": "T0_SCHMERZ_07",
+        "name_s2": "S2_SCHMERZ_07",
+        "newName": "Rueckenschmerzen_Ausstrahlung"
+    },
+    "GES_BL_01": {
+        "name_t0": "GES_BL_01",
+        "name_s2": "GES_BL_01",
+        "newName": "Klossgefuehl"
+    },
+    "GES_BL_02": {
+        "name_t0": "GES_BL_02",
+        "name_s2": "GES_BL_02",
+        "newName": "Kurzatmig"
+    },
+    "GES_BL_03": {
+        "name_t0": "GES_BL_03",
+        "name_s2": "GES_BL_03",
+        "newName": "Schwaechegefuehl"
+    },
+    "GES_BL_04": {
+        "name_t0": "GES_BL_04",
+        "name_s2": "GES_BL_04",
+        "newName": "Schluckbeschwerden"
+    },
+    "GES_BL_05": {
+        "name_t0": "GES_BL_05",
+        "name_s2": "GES_BL_05",
+        "newName": "Schmerz_Brust"
+    },
+    "GES_BL_06": {
+        "name_t0": "GES_BL_06",
+        "name_s2": "GES_BL_06",
+        "newName": "Voellegefuehl"
+    },
+    "GES_BL_07": {
+        "name_t0": "GES_BL_07",
+        "name_s2": "GES_BL_07",
+        "newName": "Mattigkeit"
+    },
+    "GES_BL_08": {
+        "name_t0": "GES_BL_08",
+        "name_s2": "GES_BL_08",
+        "newName": "Ueblkeit"
+    },
+    "GES_BL_09": {
+        "name_t0": "GES_BL_09",
+        "name_s2": "GES_BL_09",
+        "newName": "Aufstossen"
+    },
+    "GES_BL_10": {
+        "name_t0": "GES_BL_10",
+        "name_s2": "GES_BL_10",
+        "newName": "Reizbarkeit"
+    },
+    "GES_BL_11": {
+        "name_t0": "GES_BL_11",
+        "name_s2": "GES_BL_11",
+        "newName": "Gruebelei"
+    },
+    "GES_BL_12": {
+        "name_t0": "GES_BL_12",
+        "name_s2": "GES_BL_12",
+        "newName": "Schwitzen"
+    },
+    "GES_BL_14": {
+        "name_t0": "GES_BL_14",
+        "name_s2": "GES_BL_14",
+        "newName": "Innere_Unruhe"
+    },
+    "GES_BL_15": {
+        "name_t0": "GES_BL_15",
+        "name_s2": "GES_BL_15",
+        "newName": "Schweregefuehl"
+    },
+    "GES_BL_16": {
+        "name_t0": "GES_BL_16",
+        "name_s2": "GES_BL_16",
+        "newName": "Unruhe_Beine"
+    },
+    "GES_BL_17": {
+        "name_t0": "GES_BL_17",
+        "name_s2": "GES_BL_17",
+        "newName": "Waerme_Ueberempfindlichkeit"
+    },
+    "GES_BL_18": {
+        "name_t0": "GES_BL_18",
+        "name_s2": "GES_BL_18",
+        "newName": "Kaelte_Ueberempfindlichkeit"
+    },
+    "GES_BL_19": {
+        "name_t0": "GES_BL_19",
+        "name_s2": "GES_BL_19",
+        "newName": "Hohes_Schlafbeduerfnis"
+    },
+    "GES_BL_20": {
+        "name_t0": "GES_BL_20",
+        "name_s2": "GES_BL_20",
+        "newName": "Schlaflosigkeit"
+    },
+    "GES_BL_21": {
+        "name_t0": "GES_BL_21",
+        "name_s2": "GES_BL_21",
+        "newName": "Schwindelgefuehl"
+    },
+    "GES_BL_22": {
+        "name_t0": "GES_BL_22",
+        "name_s2": "GES_BL_22",
+        "newName": "Zittern"
+    },
+    "GES_BL_24": {
+        "name_t0": "GES_BL_24",
+        "name_s2": "GES_BL_24",
+        "newName": "Gewichtabnahme"
+    },
+    "GES_BL_25": {
+        "name_t0": "GES_BL_25",
+        "name_s2": "GES_BL_25",
+        "newName": "Kopfschmerzen"
+    },
+    "GES_BL_26": {
+        "name_t0": "GES_BL_26",
+        "name_s2": "GES_BL_26",
+        "newName": "Muedigkeit"
+    },
+    "GES_BL_27": {
+        "name_t0": "GES_BL_27",
+        "name_s2": "GES_BL_27",
+        "newName": "Atemnot"
+    },
+    "GES_BL_28": {
+        "name_t0": "GES_BL_28",
+        "name_s2": "GES_BL_28",
+        "newName": "Erstickungsgefuehl"
+    },
+    "GES_BL_29": {
+        "name_t0": "GES_BL_29",
+        "name_s2": "GES_BL_29",
+        "newName": "Herzklopfen"
+    },
+    "GES_BL_30": {
+        "name_t0": "GES_BL_30",
+        "name_s2": "GES_BL_30",
+        "newName": "Angstgefuehl"
+    },
+    "GES_BL_31": {
+        "name_t0": "GES_BL_31",
+        "name_s2": "GES_BL_31",
+        "newName": "Leibschmerzen"
+    },
+    "GES_BL_32": {
+        "name_t0": "GES_BL_32",
+        "name_s2": "GES_BL_32",
+        "newName": "Ernergielosigkeit"
+    },
+    "GES_BL_34": {
+        "name_t0": "GES_BL_34",
+        "name_s2": "GES_BL_34",
+        "newName": "Konzentrationsschwaeche"
+    },
+    "GES_BL_35": {
+        "name_t0": "GES_BL_35",
+        "name_s2": "GES_BL_35",
+        "newName": "Hitzewallungen"
+    },
+    "GES_BL_36": {
+        "name_t0": "GES_BL_36",
+        "name_s2": "GES_BL_36",
+        "newName": "Gespanntheit"
+    },
+    "GES_BL_37": {
+        "name_t0": "GES_BL_37",
+        "name_s2": "GES_BL_37",
+        "newName": "Taubheitsgefuehl"
+    },
+    "GES_BL_38": {
+        "name_t0": "GES_BL_38",
+        "name_s2": "GES_BL_38",
+        "newName": "Wetterfuehligkeit"
+    },
+    "GES_BL_39": {
+        "name_t0": "GES_BL_39",
+        "name_s2": "GES_BL_39",
+        "newName": "Hoerbeschwerden"
+    },
+    "GES_BL_40": {
+        "name_t0": "GES_BL_40",
+        "name_s2": "GES_BL_40",
+        "newName": "Depression"
+    },
+    "GES_BL_41": {
+        "name_t0": "GES_BL_41",
+        "name_s2": "GES_BL_41",
+        "newName": "Andere_Beschwerden"
+    }
+}

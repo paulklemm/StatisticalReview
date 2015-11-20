@@ -1,0 +1,67 @@
+---
+title: "VAST15 Statistical Review"
+author: "Paul Klemm"
+date: "19. November 2015"
+output: 
+  html_document:
+    toc: true
+---
+
+This notebooks conducts a statistical analysis of hypotheses derived through the VAST'15 publication [3D Regression Heat Map Analysis of Population Study Data](http://dx.doi.org/10.1109/tvcg.2015.2468291).
+
+```{r}
+ship <- read.csv('/Users/paul/Tresors/regresson-heatmap/data/breast_fat_imageonly_labels_parenchym_mean.csv')
+```
+
+## ANOVA of `Parenchyma Tissue` and `Kidney Disorder`
+
+```{r}
+library(gplots)
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by disease kidney disorder", xlab="kidney disorder", ylab="parenchyma tissue")
+
+means<- round(tapply(ship$Segmentation_ParenchymToVolume, ship$Disease_Kidney_Disorder, mean), digits=2)
+means
+
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, main="parenchyma tissue by disease kidney disorder (mean is black dot)", xlab="kidney disorder", ylab="parenchyma", col=rainbow(7))
+```
+
+Remove Subjects with error or no value for `kidney disorder`.
+
+```{r}
+library(dplyr)
+# Analyze only for subjects with valid back pain indicators
+#ship_valid_kidney <- filter(.data = ship, as.integer(Disease_Kidney_Disorder) < 90000)
+#ship_valid_kidney <- ship %>% filter(Disease_Kidney_Disorder == "Nein 99998 - Fehler, Daten nicht mehr erhebbar") %>% droplevels()
+ship_valid_kidney <- filter(ship, !(as.character(Disease_Kidney_Disorder)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
+ship_valid_kidney <- droplevels(ship_valid_kidney)
+
+plotmeans(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by disease kidney disorder", xlab="kidney disorder", ylab="parenchyma tissue")
+
+boxplot(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, main="parenchyma tissue by disease kidney disorder (mean is black dot)", xlab="kidney disorder", ylab="parenchyma", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~Disease_Kidney_Disorder, data = ship_valid_kidney))
+```
+
+The ANOVA comprises of a fairly low F value with a p value of 0.103. Therefore, by the standard of a p value of 0.05, the alternative hypothesis has to be rejected.
+
+
+## ANOVA of `Parenchyma Tissue` and `Diabetes`
+
+```{r}
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by diabetes", xlab="diabetes", ylab="parenchyma tissue")
+
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, main="parenchyma tissue by diabetes (mean is black dot)", xlab="diabetes", ylab="parenchyma", col=rainbow(7))
+```
+
+```{r}
+ship_valid_diabetes <- filter(ship, !(as.character(Diabetes)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
+ship_valid_diabetes <- droplevels(ship_valid_diabetes)
+
+plotmeans(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by diabetes", xlab="diabetes", ylab="parenchyma tissue")
+
+boxplot(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, main="parenchyma tissue by diabetes (mean is black dot)", xlab="diabetes", ylab="parenchyma", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~Diabetes, data = ship_valid_diabetes))
+```
+
+Diabetes shows a significant correlation with parenchyma tissue with an F value o 12.8 and a p value of 0.0003.

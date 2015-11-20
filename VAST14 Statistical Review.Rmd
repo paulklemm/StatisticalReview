@@ -1,0 +1,207 @@
+---
+title: "VAST14 Statistical Review"
+author: "Paul Klemm"
+date: "18. November 2015"
+output: 
+  html_document:
+    toc: true
+---
+
+This notebooks conducts a statistical analysis of hypotheses derived through the VAST'14 publication [Interactive Visual Analysis of Image-Centric Cohort Study Data](http://dx.doi.org/10.1109/tvcg.2014.2346591).
+
+Sources are:
+
+- [https://stats.stackexchange.com/questions/108007/correlations-with-categorical-variables](https://stats.stackexchange.com/questions/108007/correlations-with-categorical-variables)
+- [http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html](http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html)
+- [https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova](https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova)
+- [https://stats.stackexchange.com/questions/147863/how-to-interpret-the-residual-colors-on-a-mosaic-plot](https://stats.stackexchange.com/questions/147863/how-to-interpret-the-residual-colors-on-a-mosaic-plot)
+- Mosaic Plot Residual Shading [https://cran.r-project.org/web/packages/vcd/vignettes/residual-shadings.pdf](https://cran.r-project.org/web/packages/vcd/vignettes/residual-shadings.pdf)
+
+## Setup
+
+Load the data and only keep subjects with extracted centerlines. This is necessary to have a concurrent population with the paper.
+
+```{r}
+# Get all subjects IDs with centerlines
+centerlines <- list.files('/Users/paul/Sites/vis14/site/data/centerlines')
+# Replace the centerlines to leave only the subject IDs
+centerlines <- gsub(pattern = '_MESH_COR_ES.vtk', replacement = '', centerlines)
+#'/Users/paul/Sites/vis14/site/data/ship-data/data/shipdata/s0-t0_correlations.json'
+# Now read both SHIP cohorts and only keep the subjects with a centerline
+ship_s2 <- read.csv('/Users/paul/Sites/vis14/site/data/ship-data/data/shipdata/SHIP_2013_174_D_S2_complete/SHIP_2013_174_D_S2_complete.csv')
+ship_t0 <- read.csv('/Users/paul/Sites/vis14/site/data/ship-data/data/shipdata/SHIP_2013_174_D_T0_complete/SHIP_2013_174_D_T0_complete.csv')
+# Rename dimension names
+library(jsonlite)
+same_features <- fromJSON('same_features.json')
+for (rename_feature in same_features) {
+  names(ship_t0)[names(ship_t0)==rename_feature$name_t0] <- rename_feature$newName
+  names(ship_s2)[names(ship_s2)==rename_feature$name_s2] <- rename_feature$newName
+}
+ship <- merge(ship_s2, ship_t0, all = TRUE)
+# Only keep subjects with an extracted centerline (https://stackoverflow.com/questions/9860090/in-r-why-is-better-than-subset)
+ship <- ship[ship$zz_nr %in% centerlines, ]
+```
+
+## ANOVA for `Back Pain` and `Age`.
+
+At first, display the means between the groups.
+
+**H_0** There is no difference in `Back Pain` regarding `Age`.
+
+**H_1** The `Back Pain` groups are *not* equal w.r.t. `Age`.
+
+```{r}
+library(gplots)
+plotmeans(ship$Age ~ ship$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
+
+boxplot(ship$Age ~ ship$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+```
+
+The few outliers may distort the analysis, therefore I remove them.
+```{r}
+library(dplyr)
+# Convert back pain to a factor variable
+ship$Rueckenschmerz_3Monate <- as.factor(ship$Rueckenschmerz_3Monate)
+# Analyze only for subjects with valid back pain indicators
+#ship_valid_backpain <- filter(.data = ship, as.numeric(ship$Rueckenschmerz_3Monate) < 90000)
+ship_valid_backpain <- filter(ship, !(as.character(Rueckenschmerz_3Monate)%in% c("99996", "99998", "99999")))
+ship_valid_backpain <- droplevels(ship_valid_backpain)
+```
+
+Apply the same plot again.
+
+```{r}
+library(gplots)
+plotmeans(ship_valid_backpain$Age ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
+
+boxplot(ship_valid_backpain$Age ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+```
+
+Calculate the ANOVA for both data sets.
+
+```{r}
+summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship))
+summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship_valid_backpain))
+```
+
+Neither of the features are suitable to confirm the alternative hypothesis. Help with the interpretation can be found here:
+
+- [http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html](http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html)
+- [https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova](https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova)
+
+## ANOVA for `Back Pain` and `Body Fat`
+
+At first, plot again the means as well as create the boxplots.
+
+```{r}
+plotmeans(ship_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
+
+boxplot(ship_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+```
+
+The boxplot shows that there are most likely error codes still in the `body fat` group, which are therefore removed.
+
+```{r}
+ship_valid_backpain_bodyfat <- filter(.data = ship_valid_backpain, BIA_KOERPERFETT_KORR_IN_PROZ < 90000)
+
+boxplot(ship_valid_backpain_bodyfat$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain_bodyfat$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
+summary(aov(formula = BIA_KOERPERFETT_KORR_IN_PROZ~Rueckenschmerz_3Monate, data = ship_valid_backpain_bodyfat))
+```
+
+The p value is very low with a high F value, therefore we can accept the alternative hypothesis.
+
+## ANOVA for `Back Pain` and `Body Weight`
+
+At first, plot again the means as well as create the boxplots.
+
+```{r}
+plotmeans(ship_valid_backpain$Gewicht ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
+
+boxplot(ship_valid_backpain$Gewicht ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
+summary(aov(formula = Gewicht~Rueckenschmerz_3Monate, data = ship_valid_backpain))
+```
+
+The ANOVA rejects the alternative hypothesis.
+
+## Cramérs V for `Back Pain` and `High Blood Pressure`
+
+Since both features are categorical, the statistic of choice is Cramérs V. At first, look at the mosaic plot.
+
+```{r}
+library(vcd)
+tab <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+mosaic(tab, shade=TRUE, legend=TRUE)
+```
+
+`Blood pressure` shows some error markers, which are removed before conducting the Cramérs V analysis.
+
+```{r}
+ship_valid_backpain_bloodpressure <- filter(.data = ship_valid_backpain, Blutdruck_hoch < 900)
+tab <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_valid_backpain_bloodpressure)
+mosaic(tab, shade=TRUE, legend=TRUE)
+summary(assocstats(tab))
+```
+
+Cramérs V is very low and therefore, no correlation can be observed.
+
+## Cramérs V for `Back Pain` and `Alcohol Intake in the last 12 month`
+
+Create a mosaic plot first.
+
+```{r}
+tab <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+mosaic(tab, shade=TRUE, legend=TRUE)
+```
+
+Remove the error values
+
+```{r}
+ship_valid_backpain_alcohol <- filter(.data = ship_valid_backpain, Haeufigkeit_Alkohol_12Monate < 900)
+tab <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain_alcohol)
+mosaic(tab, shade=TRUE, legend=TRUE)
+summary(assocstats(tab))
+```
+
+Again a very low value, no correlation found.
+
+## Cramérs V for `Back Pain` and `Attentiveness Problems`
+
+Create a mosaic plot first.
+
+```{r}
+tab <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+mosaic(tab, shade=TRUE, legend=TRUE)
+```
+
+Remove the error values
+
+```{r}
+ship_valid_backpain_attentive <- filter(.data = ship_valid_backpain, Konzentrationsschwaeche < 900)
+tab <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain_attentive)
+# 
+mosaic(tab, shade=TRUE, legend=TRUE)
+summary(assocstats(tab))
+```
+
+The plot actually shows a low relationship of `attentiveness problems` and `back pain`.
+
+## Cramérs V of `Amount of Sleep` and `Back Pain`
+
+First, create the mosaic plot.
+
+```{r}
+tab <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+mosaic(tab, shade=TRUE, legend=TRUE)
+```
+
+Remove the error values and conduct the analysis.
+
+```{r}
+ship_valid_backpain_sleep <- filter(.data = ship_valid_backpain, Hohes_Schlafbeduerfnis < 900)
+tab <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain_sleep)
+# 
+mosaic(tab, shade=TRUE, legend=TRUE)
+summary(assocstats(tab))
+```
