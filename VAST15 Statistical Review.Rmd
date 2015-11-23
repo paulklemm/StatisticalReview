@@ -116,3 +116,39 @@ boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammo
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Left_BI_RADS, data = ship_valid_mammography))
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_BI_RADS, data = ship_valid_mammography))
 ```
+
+## ANOVA for `Parenchyma Tissue` and `Breast Lesions`
+
+This is once again a categorical target feature which is derived for the left and right breast separately.
+
+```{r}
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Left_Lesion, data = ship_valid_mammography))
+summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_Lesion, data = ship_valid_mammography))
+```
+
+The ANOVA rejects the alternative hypothesis of a correlation between `parenchyma tissue` and `breast lesion`.
+
+## ANOVA between `Parenchyma Tissue` and `Spiral Contraception`
+
+```{r}
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+```
+
+Now remove the subjects without a valid contraception entry.
+
+```{r}
+ship_valid_contraception <- filter(ship, !(as.character(MAMMA_Anamnesis_Contraception_Spiral)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
+ship_valid_contraception <- droplevels(ship_valid_contraception)
+
+plotmeans(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue")
+boxplot(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+
+summary(aov(formula = Segmentation_ParenchymToVolume~MAMMA_Anamnesis_Contraception_Spiral, data = ship_valid_contraception))
+```
