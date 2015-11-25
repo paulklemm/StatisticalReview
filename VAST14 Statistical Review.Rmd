@@ -21,6 +21,14 @@ Sources are:
 
 Load the data and only keep subjects with extracted centerlines. This is necessary to have a concurrent population with the paper.
 
+```{r results='hide', message=FALSE}
+library(gplots)
+library(jsonlite)
+library(dplyr)
+library(vcd)
+library(gridExtra)
+```
+
 ```{r}
 # Get all subjects IDs with centerlines
 centerlines <- list.files('/Users/paul/Sites/vis14/site/data/centerlines')
@@ -31,7 +39,6 @@ centerlines <- gsub(pattern = '_MESH_COR_ES.vtk', replacement = '', centerlines)
 ship_s2 <- read.csv('/Users/paul/Sites/vis14/site/data/ship-data/data/shipdata/SHIP_2013_174_D_S2_complete/SHIP_2013_174_D_S2_complete.csv')
 ship_t0 <- read.csv('/Users/paul/Sites/vis14/site/data/ship-data/data/shipdata/SHIP_2013_174_D_T0_complete/SHIP_2013_174_D_T0_complete.csv')
 # Rename dimension names
-library(jsonlite)
 same_features <- fromJSON('same_features.json')
 for (rename_feature in same_features) {
   names(ship_t0)[names(ship_t0)==rename_feature$name_t0] <- rename_feature$newName
@@ -40,6 +47,10 @@ for (rename_feature in same_features) {
 ship <- merge(ship_s2, ship_t0, all = TRUE)
 # Only keep subjects with an extracted centerline (https://stackoverflow.com/questions/9860090/in-r-why-is-better-than-subset)
 ship <- ship[ship$zz_nr %in% centerlines, ]
+
+# Filter Subjects above 60
+# TODO: Continue here
+ship_age <- filter(ship, Age > 60)
 ```
 
 ## ANOVA for `Back Pain` and `Age`.
@@ -50,38 +61,53 @@ At first, display the means between the groups.
 
 **H_1** The `Back Pain` groups are *not* equal w.r.t. `Age`.
 
-```{r}
-library(gplots)
+```{r fig.width=10, fig.height=8}
+par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
 plotmeans(ship$Age ~ ship$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
 
 boxplot(ship$Age ~ ship$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+
+plotmeans(ship_age$Age ~ ship_age$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
+
+boxplot(ship_age$Age ~ ship_age$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+
+title(main = "Top: Age by Back Pain; Bottom: Subjects older than 60 years", outer=TRUE)
 ```
 
 The few outliers may distort the analysis, therefore I remove them.
-```{r}
-library(dplyr)
+```{r fig.width=10, fig.height=8}
 # Convert back pain to a factor variable
 ship$Rueckenschmerz_3Monate <- as.factor(ship$Rueckenschmerz_3Monate)
+ship_age$Rueckenschmerz_3Monate <- as.factor(ship_age$Rueckenschmerz_3Monate)
 # Analyze only for subjects with valid back pain indicators
-#ship_valid_backpain <- filter(.data = ship, as.numeric(ship$Rueckenschmerz_3Monate) < 90000)
 ship_valid_backpain <- filter(ship, !(as.character(Rueckenschmerz_3Monate)%in% c("99996", "99998", "99999")))
+ship_age_valid_backpain <- filter(ship_age, !(as.character(Rueckenschmerz_3Monate)%in% c("99996", "99998", "99999")))
 ship_valid_backpain <- droplevels(ship_valid_backpain)
+ship_age_valid_backpain <- droplevels(ship_age_valid_backpain)
 ```
 
 Apply the same plot again.
 
-```{r}
-library(gplots)
+```{r fig.width=10, fig.height=8}
+par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
 plotmeans(ship_valid_backpain$Age ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
 
 boxplot(ship_valid_backpain$Age ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+
+plotmeans(ship_age_valid_backpain$Age ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of Age by back pain")
+
+boxplot(ship_age_valid_backpain$Age ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, main="Back pain by age (mean is black dot)", xlab="back pain", ylab="age", col=rainbow(7))
+
+title(main = "Top: Age by Back Pain; Bottom: Subjects older than 60 years", outer=TRUE)
 ```
 
 Calculate the ANOVA for both data sets.
 
-```{r}
+```{r fig.width=10, fig.height=8}
 summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship))
 summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship_valid_backpain))
+summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship_age))
+summary(aov(formula = Age~Rueckenschmerz_3Monate, data = ship_age_valid_backpain))
 ```
 
 Neither of the features are suitable to confirm the alternative hypothesis. Help with the interpretation can be found here:
@@ -93,20 +119,34 @@ Neither of the features are suitable to confirm the alternative hypothesis. Help
 
 At first, plot again the means as well as create the boxplots.
 
-```{r}
+```{r fig.width=10, fig.height=8}
+par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
 plotmeans(ship_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
 
 boxplot(ship_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
+plotmeans(ship_age_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
+
+boxplot(ship_age_valid_backpain$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
+title(main = "Top: Age by Body Fat; Bottom: Subjects older than 60 years", outer=TRUE)
 ```
 
 The boxplot shows that there are most likely error codes still in the `body fat` group, which are therefore removed.
 
-```{r}
+```{r fig.width=10, fig.height=8}
 ship_valid_backpain_bodyfat <- filter(.data = ship_valid_backpain, BIA_KOERPERFETT_KORR_IN_PROZ < 90000)
 
+ship_age_valid_backpain_bodyfat <- filter(.data = ship_age_valid_backpain, BIA_KOERPERFETT_KORR_IN_PROZ < 90000)
+
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
 boxplot(ship_valid_backpain_bodyfat$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_valid_backpain_bodyfat$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
 
+boxplot(ship_age_valid_backpain_bodyfat$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_age_valid_backpain_bodyfat$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
 summary(aov(formula = BIA_KOERPERFETT_KORR_IN_PROZ~Rueckenschmerz_3Monate, data = ship_valid_backpain_bodyfat))
+
+summary(aov(formula = BIA_KOERPERFETT_KORR_IN_PROZ~Rueckenschmerz_3Monate, data = ship_age_valid_backpain_bodyfat))
 ```
 
 The p value is very low with a high F value, therefore we can accept the alternative hypothesis.
@@ -115,12 +155,21 @@ The p value is very low with a high F value, therefore we can accept the alterna
 
 At first, plot again the means as well as create the boxplots.
 
-```{r}
+```{r fig.width=10, fig.height=8}
+par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+
 plotmeans(ship_valid_backpain$Gewicht ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
 
 boxplot(ship_valid_backpain$Gewicht ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
 
+plotmeans(ship_age_valid_backpain$Gewicht ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of body fat by back pain", xlab="back pain", ylab="body fat")
+
+boxplot(ship_age_valid_backpain$Gewicht ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, main="back pain by body fat (mean is black dot)", xlab="back pain", ylab="body fat", col=rainbow(7))
+
+title(main = "Top: Age by Body Weight; Bottom: Subjects older than 60 years", outer=TRUE)
+
 summary(aov(formula = Gewicht~Rueckenschmerz_3Monate, data = ship_valid_backpain))
+summary(aov(formula = Gewicht~Rueckenschmerz_3Monate, data = ship_age_valid_backpain))
 ```
 
 The ANOVA rejects the alternative hypothesis.
@@ -129,19 +178,29 @@ The ANOVA rejects the alternative hypothesis.
 
 Since both features are categorical, the statistic of choice is Cramérs V. At first, look at the mosaic plot.
 
-```{r}
-library(vcd)
-tab <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_valid_backpain)
-mosaic(tab, shade=TRUE, legend=TRUE)
+```{r fig.width=10, fig.height=8}
+tab_standard <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+tab_age <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_age_valid_backpain)
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Blutdruck_hoch="High Blood Pressure", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Blutdruck_hoch="High Blood Pressure (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
+
 ```
 
 `Blood pressure` shows some error markers, which are removed before conducting the Cramérs V analysis.
 
-```{r}
+```{r fig.width=10, fig.height=8}
 ship_valid_backpain_bloodpressure <- filter(.data = ship_valid_backpain, Blutdruck_hoch < 900)
-tab <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = ship_valid_backpain_bloodpressure)
-mosaic(tab, shade=TRUE, legend=TRUE)
-summary(assocstats(tab))
+ship_age_valid_backpain_bloodpressure <- filter(.data = ship_age_valid_backpain, Blutdruck_hoch < 900)
+tab_standard <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = 
+ship_valid_backpain_bloodpressure)
+tab_age <- xtabs(~Blutdruck_hoch + Rueckenschmerz_3Monate, data = 
+ship_age_valid_backpain_bloodpressure)
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Blutdruck_hoch="High Blood Pressure", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Blutdruck_hoch="High Blood Pressure (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
+summary(assocstats(tab_standard))
+summary(assocstats(tab_age))
 ```
 
 Cramérs V is very low and therefore, no correlation can be observed.
@@ -150,18 +209,36 @@ Cramérs V is very low and therefore, no correlation can be observed.
 
 Create a mosaic plot first.
 
-```{r}
-tab <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain)
-mosaic(tab, shade=TRUE, legend=TRUE)
+```{r fig.width=10, fig.height=8}
+# Create Tabs
+tab_standard <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+tab_age <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_age_valid_backpain)
+
+# Plot Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Haeufigkeit_Alkohol_12Monate="Alcohol Intake in last 12 Month", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Haeufigkeit_Alkohol_12Monate="Alcohol Intake in last 12 Month (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
 ```
 
 Remove the error values
 
-```{r}
+```{r fig.width=10, fig.height=8}
+# Filter Subjects
 ship_valid_backpain_alcohol <- filter(.data = ship_valid_backpain, Haeufigkeit_Alkohol_12Monate < 900)
-tab <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain_alcohol)
-mosaic(tab, shade=TRUE, legend=TRUE)
-summary(assocstats(tab))
+ship_age_valid_backpain_alcohol <- filter(.data = ship_age_valid_backpain, Haeufigkeit_Alkohol_12Monate < 900)
+
+# Create Tables
+tab_standard <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_valid_backpain_alcohol)
+tab_age <- xtabs(~Haeufigkeit_Alkohol_12Monate + Rueckenschmerz_3Monate, data = ship_age_valid_backpain_alcohol)
+
+# Plot Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Haeufigkeit_Alkohol_12Monate="Alcohol Intake in last 12 Month", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Haeufigkeit_Alkohol_12Monate="Alcohol Intake in last 12 Month (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
+
+# Calculate Correlations
+summary(assocstats(tab_standard))
+summary(assocstats(tab_age))
 ```
 
 Again a very low value, no correlation found.
@@ -170,19 +247,36 @@ Again a very low value, no correlation found.
 
 Create a mosaic plot first.
 
-```{r}
-tab <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain)
-mosaic(tab, shade=TRUE, legend=TRUE)
+```{r fig.width=10, fig.height=8}
+# Create Tables
+tab_standard <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+tab_age <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_age_valid_backpain)
+
+# Plot Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Konzentrationsschwaeche="Attentiveness Disorder", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Konzentrationsschwaeche="Attentiveness Disorder (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
 ```
 
 Remove the error values
 
-```{r}
+```{r fig.width=10, fig.height=8}
+# Remove the Errors Values
 ship_valid_backpain_attentive <- filter(.data = ship_valid_backpain, Konzentrationsschwaeche < 900)
-tab <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain_attentive)
-# 
-mosaic(tab, shade=TRUE, legend=TRUE)
-summary(assocstats(tab))
+ship_age_valid_backpain_attentive <- filter(.data = ship_age_valid_backpain, Konzentrationsschwaeche < 900)
+
+# Create Tabs
+tab_standard <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_valid_backpain_attentive)
+tab_age <- xtabs(~Konzentrationsschwaeche + Rueckenschmerz_3Monate, data = ship_age_valid_backpain_attentive)
+
+# Create Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Konzentrationsschwaeche="Attentiveness Disorder", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Konzentrationsschwaeche="Attentiveness Disorder (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
+
+# Calculate Correlations
+summary(assocstats(tab_standard))
+summary(assocstats(tab_age))
 ```
 
 The plot actually shows a low relationship of `attentiveness problems` and `back pain`.
@@ -191,17 +285,34 @@ The plot actually shows a low relationship of `attentiveness problems` and `back
 
 First, create the mosaic plot.
 
-```{r}
-tab <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain)
-mosaic(tab, shade=TRUE, legend=TRUE)
+```{r fig.width=10, fig.height=8}
+# Calculate Tabs
+tab_standard <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain)
+tab_age <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_age_valid_backpain)
+
+# Plot Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Hohes_Schlafbeduerfnis="High Amount of Sleep", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Hohes_Schlafbeduerfnis="High Amount of Sleep (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
 ```
 
 Remove the error values and conduct the analysis.
 
-```{r}
+```{r fig.width=10, fig.height=8}
+# Remove Error Values
 ship_valid_backpain_sleep <- filter(.data = ship_valid_backpain, Hohes_Schlafbeduerfnis < 900)
-tab <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain_sleep)
-# 
-mosaic(tab, shade=TRUE, legend=TRUE)
-summary(assocstats(tab))
+ship_age_valid_backpain_sleep <- filter(.data = ship_age_valid_backpain, Hohes_Schlafbeduerfnis < 900)
+
+# Create Tables
+tab_standard <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_valid_backpain_sleep)
+tab_age <- xtabs(~Hohes_Schlafbeduerfnis + Rueckenschmerz_3Monate, data = ship_age_valid_backpain_sleep)
+
+# Plot Mosaics
+mosaic_standard <- grid.grabExpr(mosaic(tab_standard, shade=TRUE, legend=TRUE, set_varnames = list(Hohes_Schlafbeduerfnis="High Amount of Sleep", Rueckenschmerz_3Monate="Back Pain")))
+mosaic_age <- grid.grabExpr(mosaic(tab_age, shade=TRUE, legend=TRUE, set_varnames = list(Hohes_Schlafbeduerfnis="High Amount of Sleep (Age > 60 years)", Rueckenschmerz_3Monate="Back Pain (Age > 60 years)")))
+grid.arrange(mosaic_standard, mosaic_age, ncol=2)
+
+# Calculate Correlations
+summary(assocstats(tab_standard))
+summary(assocstats(tab_age))
 ```
