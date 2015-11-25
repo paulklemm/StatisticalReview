@@ -9,35 +9,53 @@ output:
 
 This notebooks conducts a statistical analysis of hypotheses derived through the VAST'15 publication [3D Regression Heat Map Analysis of Population Study Data](http://dx.doi.org/10.1109/tvcg.2015.2468291).
 
-```{r}
+Sources are:
+
+- [https://stats.stackexchange.com/questions/108007/correlations-with-categorical-variables](https://stats.stackexchange.com/questions/108007/correlations-with-categorical-variables)
+- [http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html](http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html)
+- [https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova](https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova)
+- [https://stats.stackexchange.com/questions/147863/how-to-interpret-the-residual-colors-on-a-mosaic-plot](https://stats.stackexchange.com/questions/147863/how-to-interpret-the-residual-colors-on-a-mosaic-plot)
+
+## Setup
+
+Load the data and only keep subjects with extracted centerlines. This is necessary to have a concurrent population with the paper.
+
+```{r results='hide', message=FALSE}
+library(gplots)
+library(jsonlite)
+library(dplyr)
+library(vcd)
+library(gridExtra)
+```
+
+```{r fig.width=10, fig.height=4}
 ship <- read.csv('/Users/paul/Tresors/regresson-heatmap/data/breast_fat_imageonly_labels_parenchym_mean.csv')
 ```
 
 ## ANOVA of `Parenchyma Tissue` and `Kidney Disorder`
 
-```{r}
-library(gplots)
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by disease kidney disorder", xlab="kidney disorder", ylab="parenchyma tissue")
+```{r fig.width=10, fig.height=4}
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
 
-means<- round(tapply(ship$Segmentation_ParenchymToVolume, ship$Disease_Kidney_Disorder, mean), digits=2)
-means
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, xlab="Kidney Disorder", ylab="Parenchyma Tissue")
 
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, main="parenchyma tissue by disease kidney disorder (mean is black dot)", xlab="kidney disorder", ylab="parenchyma", col=rainbow(7))
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Disease_Kidney_Disorder, xlab="Kidney Disorder", ylab="parenchyma", col=rainbow(7))
+
+title(main = "Parenchyma Tissue by Kidney Disorder", outer=TRUE)
 ```
 
 Remove Subjects with error or no value for `kidney disorder`.
 
-```{r}
-library(dplyr)
+```{r fig.width=10, fig.height=4}
 # Analyze only for subjects with valid back pain indicators
-#ship_valid_kidney <- filter(.data = ship, as.integer(Disease_Kidney_Disorder) < 90000)
-#ship_valid_kidney <- ship %>% filter(Disease_Kidney_Disorder == "Nein 99998 - Fehler, Daten nicht mehr erhebbar") %>% droplevels()
 ship_valid_kidney <- filter(ship, !(as.character(Disease_Kidney_Disorder)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
 ship_valid_kidney <- droplevels(ship_valid_kidney)
 
-plotmeans(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by disease kidney disorder", xlab="kidney disorder", ylab="parenchyma tissue")
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, digits=2, ccol="red", mean.labels=T, xlab="kidney disorder", ylab="parenchyma tissue")
 
-boxplot(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, main="parenchyma tissue by disease kidney disorder (mean is black dot)", xlab="kidney disorder", ylab="parenchyma", col=rainbow(7))
+boxplot(ship_valid_kidney$Segmentation_ParenchymToVolume ~ ship_valid_kidney$Disease_Kidney_Disorder, xlab="kidney disorder", ylab="parenchyma", col=rainbow(7))
+title(main = "Parenchyma Tissue by Kidney Disorder", outer=TRUE)
 
 summary(aov(formula = Segmentation_ParenchymToVolume~Disease_Kidney_Disorder, data = ship_valid_kidney))
 ```
@@ -47,45 +65,57 @@ The ANOVA comprises of a fairly low F value with a p value of 0.103. Therefore, 
 
 ## ANOVA of `Parenchyma Tissue` and `Diabetes`
 
-```{r}
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by diabetes", xlab="diabetes", ylab="parenchyma tissue")
+```{r fig.width=10, fig.height=4}
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, digits=2, ccol="red", mean.labels=T, xlab="diabetes", ylab="parenchyma tissue")
 
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, main="parenchyma tissue by diabetes (mean is black dot)", xlab="diabetes", ylab="parenchyma", col=rainbow(7))
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Diabetes, xlab="diabetes", ylab="parenchyma", col=rainbow(7))
+title(main = "Parenchyma Tissue by Diabetes", outer=TRUE)
 ```
 
-```{r}
+```{r fig.width=10, fig.height=4}
+# Filter the Error Values
 ship_valid_diabetes <- filter(ship, !(as.character(Diabetes)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
 ship_valid_diabetes <- droplevels(ship_valid_diabetes)
 
-plotmeans(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by diabetes", xlab="diabetes", ylab="parenchyma tissue")
+# Create Means und Boxplots
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, digits=2, ccol="red", mean.labels=T, xlab="diabetes", ylab="parenchyma tissue")
+boxplot(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, xlab="diabetes", ylab="parenchyma", col=rainbow(7))
+title(main = "Parenchyma Tissue by Diabetes", outer=TRUE)
 
-boxplot(ship_valid_diabetes$Segmentation_ParenchymToVolume ~ ship_valid_diabetes$Diabetes, main="parenchyma tissue by diabetes (mean is black dot)", xlab="diabetes", ylab="parenchyma", col=rainbow(7))
-
+# Calculate the Analysis of Variance
 summary(aov(formula = Segmentation_ParenchymToVolume~Diabetes, data = ship_valid_diabetes))
 ```
 
-Diabetes shows a significant correlation with parenchyma tissue with an F value o 12.8 and a p value of 0.0003.
+Diabetes shows a significant correlation with parenchyma tissue with an F value of 12.8 and a p value of 0.0003.
 
 ## ANOVA of `Parenchyma Tissue` and `Hormone Replacement Therapy`
 
 At first, visualize the means and draw the box plots.
 
-```{r}
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by hormone replacement therapy", xlab="hormone replacement therapy", ylab="parenchyma tissue")
-
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, main="parenchyma tissue by hormone replacement therapy (mean is black dot)", xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
+```{r fig.width=10, fig.height=4}
+# Create Means and Box Plot
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, xlab="hormone replacement therapy", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Women_Hormone_Replacement_Therapy, xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Hormone Replacement Therapy", outer=TRUE)
 ```
 
 As before, remove the error dimensions and conduct the ANOVA.
 
-```{r}
+```{r fig.width=10, fig.height=4}
+# Filter the Error Values
 ship_valid_hormone <- filter(ship, !(as.character(Women_Hormone_Replacement_Therapy)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
 ship_valid_hormone <- droplevels(ship_valid_hormone)
 
-plotmeans(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by hormone replacement therapy", xlab="hormone replacement therapy", ylab="parenchyma tissue")
+# Create the Means and the Box Plots
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, digits=2, ccol="red", mean.labels=T, xlab="hormone replacement therapy", ylab="parenchyma tissue")
+boxplot(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Hormone Replacement Therapy", outer=TRUE)
 
-boxplot(ship_valid_hormone$Segmentation_ParenchymToVolume ~ ship_valid_hormone$Women_Hormone_Replacement_Therapy, main="parenchyma tissue by hormone replacement therapy (mean is black dot)", xlab="hormone replacement therapy", ylab="parenchyma tissue", col=rainbow(7))
-
+# Calculate the Analysis of Variance
 summary(aov(formula = Segmentation_ParenchymToVolume~Women_Hormone_Replacement_Therapy, data = ship_valid_hormone))
 ```
 
@@ -93,26 +123,38 @@ summary(aov(formula = Segmentation_ParenchymToVolume~Women_Hormone_Replacement_T
 
 The `mammography finding classification` feature is categorical and defined individual for both breasts. Therfore, the ANOVA is conducted for both the left and the right feature. At first, plot both features.
 
-```{r}
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+```{r fig.width=10, fig.height=4}
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, xlab="Mammography Finding Classification (Left)", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Left_BI_RADS, xlab="Mammography Finding Classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Left)", outer=TRUE)
 
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, xlab="Mammography Finding Classification (Right)", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$Mammography_Right_BI_RADS, xlab="Mammography Finding Classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Right)", outer=TRUE)
 ```
 
 Now remove the invalid dimensions from both features and conduct the analysis.
 
-```{r}
+```{r fig.width=10, fig.height=4}
+# Filter Error Values
 ship_valid_mammography <- filter(ship, !(as.character(Mammography_Right_BI_RADS)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
 ship_valid_mammography <- droplevels(ship_valid_mammography)
 
-plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
-boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+# Create Box and Means Plot (Left)
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, digits=2, ccol="red", mean.labels=T, xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_BI_RADS, xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Left)", outer=TRUE)
 
-plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
-boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+# Create Box and Means Plot (Right)
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, digits=2, ccol="red", mean.labels=T, xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_BI_RADS, xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Right)", outer=TRUE)
 
+# Calculate the Analysis of Variance
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Left_BI_RADS, data = ship_valid_mammography))
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_BI_RADS, data = ship_valid_mammography))
 ```
@@ -121,13 +163,20 @@ summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_BI_RADS, 
 
 This is once again a categorical target feature which is derived for the left and right breast separately.
 
-```{r}
-plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Left)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
-boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, main="parenchyma tissue by mammography finding classification (Left) (mean is black dot)", xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+```{r fig.width=10, fig.height=4}
+# Create Means and Box Plots (Left)
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, digits=2, ccol="red", mean.labels=T, xlab="mammography finding classification (Left)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Left_Lesion, xlab="mammography finding classification (Left)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Left)", outer=TRUE)
 
-plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by mammography finding classification (Right)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
-boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, main="parenchyma tissue by mammography finding classification (Right) (mean is black dot)", xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+# Create Means and Box Plots (Right)
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, digits=2, ccol="red", mean.labels=T, xlab="mammography finding classification (Right)", ylab="parenchyma tissue")
+boxplot(ship_valid_mammography$Segmentation_ParenchymToVolume ~ ship_valid_mammography$Mammography_Right_Lesion, xlab="mammography finding classification (Right)", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Mammography Finding Classification (Right)", outer=TRUE)
 
+# Calculate Analysis of Variance
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Left_Lesion, data = ship_valid_mammography))
 summary(aov(formula = Segmentation_ParenchymToVolume~Mammography_Right_Lesion, data = ship_valid_mammography))
 ```
@@ -136,19 +185,27 @@ The ANOVA rejects the alternative hypothesis of a correlation between `parenchym
 
 ## ANOVA between `Parenchyma Tissue` and `Spiral Contraception`
 
-```{r}
-plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue")
-boxplot(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+```{r fig.width=10, fig.height=4}
+# Create Means and Box Plots
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, xlab="spiral contraception", ylab="parenchyma tissue")
+boxplot(ship$Segmentation_ParenchymToVolume ~ ship$MAMMA_Anamnesis_Contraception_Spiral, xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Spiral Contraception", outer=TRUE)
 ```
 
 Now remove the subjects without a valid contraception entry.
 
-```{r}
+```{r fig.width=10, fig.height=4}
+# Drop the Error Values
 ship_valid_contraception <- filter(ship, !(as.character(MAMMA_Anamnesis_Contraception_Spiral)%in% c("99998 - Fehler, Daten nicht mehr erhebbar", "")))
 ship_valid_contraception <- droplevels(ship_valid_contraception)
 
-plotmeans(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue")
-boxplot(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, main="parenchyma tissue by spiral contraception", xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+# Calculate Means and Box Plot
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, digits=2, ccol="red", mean.labels=T, xlab="spiral contraception", ylab="parenchyma tissue")
+boxplot(ship_valid_contraception$Segmentation_ParenchymToVolume ~ ship_valid_contraception$MAMMA_Anamnesis_Contraception_Spiral, xlab="spiral contraception", ylab="parenchyma tissue", col=rainbow(7))
+title(main = "Parenchyma Tissue by Spiral Contraception", outer=TRUE)
 
+# Calculate Analysis of Variance
 summary(aov(formula = Segmentation_ParenchymToVolume~MAMMA_Anamnesis_Contraception_Spiral, data = ship_valid_contraception))
 ```
