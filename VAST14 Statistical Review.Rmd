@@ -47,6 +47,8 @@ for (rename_feature in same_features) {
 ship <- merge(ship_s2, ship_t0, all = TRUE)
 # Only keep subjects with an extracted centerline (https://stackoverflow.com/questions/9860090/in-r-why-is-better-than-subset)
 ship <- ship[ship$zz_nr %in% centerlines, ]
+# Add BMI
+ship <- mutate(ship, BMI = ship$Gewicht / ( (ship$Groesse / 100) * (ship$Groesse / 100) ) )
 
 # Filter Subjects above 60
 # TODO: Continue here
@@ -150,6 +152,40 @@ summary(aov(formula = BIA_KOERPERFETT_KORR_IN_PROZ~Rueckenschmerz_3Monate, data 
 ```
 
 The p value is very low with a high F value, therefore we can accept the alternative hypothesis.
+
+## ANOVA for `Back Pain` and `BMI`
+
+At first, plot again the means as well as create the boxplots.
+
+```{r fig.width=10, fig.height=8}
+par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+plotmeans(ship_valid_backpain$BMI ~ ship_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of BMI by back pain", xlab="back pain", ylab="BMI")
+
+boxplot(ship_valid_backpain$BMI ~ ship_valid_backpain$Rueckenschmerz_3Monate, main="back pain by BMI (mean is black dot)", xlab="back pain", ylab="BMI", col=rainbow(7))
+
+plotmeans(ship_age_valid_backpain$BMI ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, digits=2, ccol="red", mean.labels=T, main="Plot of BMI by back pain", xlab="back pain", ylab="BMI")
+
+boxplot(ship_age_valid_backpain$BMI ~ ship_age_valid_backpain$Rueckenschmerz_3Monate, main="back pain by BMI (mean is black dot)", xlab="back pain", ylab="BMI", col=rainbow(7))
+
+title(main = "Top: Age by BMI; Bottom: Subjects older than 60 years", outer=TRUE)
+```
+
+The boxplot shows that there are most likely error codes still in the `BMI` group, which are therefore removed.
+
+```{r fig.width=10, fig.height=8}
+ship_valid_backpain_bmi <- filter(.data = ship_valid_backpain, BMI < 90000)
+
+ship_age_valid_backpain_bmi <- filter(.data = ship_age_valid_backpain, BMI < 90000)
+
+par(mfrow=c(1,2), oma=c(1,1,2,1), mar=c(2,2,2,2))
+boxplot(ship_valid_backpain_bmi$BMI ~ ship_valid_backpain_bmi$Rueckenschmerz_3Monate, main="back pain by BMI (mean is black dot)", xlab="back pain", ylab="BMI", col=rainbow(7))
+
+boxplot(ship_age_valid_backpain_bmi$BMI ~ ship_age_valid_backpain_bmi$Rueckenschmerz_3Monate, main="back pain by BMI (mean is black dot)", xlab="back pain", ylab="BMI", col=rainbow(7))
+
+summary(aov(formula = BMI~Rueckenschmerz_3Monate, data = ship_valid_backpain_bmi))
+
+summary(aov(formula = BMI~Rueckenschmerz_3Monate, data = ship_age_valid_backpain_bmi))
+```
 
 ## ANOVA for `Back Pain` and `Body Weight`
 
