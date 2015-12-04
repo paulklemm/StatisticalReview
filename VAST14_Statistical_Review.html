@@ -99,7 +99,15 @@ library(jsonlite)
 library(dplyr)
 library(vcd)
 library(gridExtra)</code></pre>
-<pre class="r"><code># Get all subjects IDs with centerlines
+<pre class="r"><code># Odds Ratio Function according to https://de.wikipedia.org/wiki/Quotenverh%C3%A4ltnis#Anwendung
+calculate_odds &lt;- function(contingency_table) {
+  return ( ( contingency_table[1,1] * contingency_table[2,2] ) / ( contingency_table[1,2] * contingency_table[2,1] ) )
+}
+calculate_odds_inverse &lt;- function(contingency_table) {
+  return ( ( contingency_table[1,2] * contingency_table[2,1] ) / ( contingency_table[1,1] * contingency_table[2,2] ) )
+}
+
+# Get all subjects IDs with centerlines
 centerlines &lt;- list.files('/Users/paul/Sites/vis14/site/data/centerlines')
 # Replace the centerlines to leave only the subject IDs
 centerlines &lt;- gsub(pattern = '_MESH_COR_ES.vtk', replacement = '', centerlines)
@@ -118,9 +126,12 @@ ship &lt;- merge(ship_s2, ship_t0, all = TRUE)
 ship &lt;- ship[ship$zz_nr %in% centerlines, ]
 # Add BMI
 ship &lt;- mutate(ship, BMI = ship$Gewicht / ( (ship$Groesse / 100) * (ship$Groesse / 100) ) )
+# Add Subjects Over 60
+ship &lt;- mutate(ship, AgeOver60 = ship$Age &gt; 60)
+ship &lt;- mutate(ship, AgeOver70 = ship$Age &gt; 70)
+ship &lt;- mutate(ship, AgeOver80 = ship$Age &gt; 80)
 
 # Filter Subjects above 60
-# TODO: Continue here
 ship_age &lt;- filter(ship, Age &gt; 60)</code></pre>
 </div>
 <div id="anova-for-back-pain-and-age." class="section level2">
@@ -199,6 +210,34 @@ title(main = &quot;Top: Age by Back Pain; Bottom: Subjects older than 60 years&q
 <li><a href="http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html"><a href="http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html" class="uri">http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html</a></a></li>
 <li><a href="https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova"><a href="https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova" class="uri">https://stats.stackexchange.com/questions/12398/how-to-interpret-f-and-p-value-in-anova</a></a></li>
 </ul>
+<p>Now we further calculate the Odds Ratio for back pain and age over 60.</p>
+<pre class="r"><code># Create Tabs
+tab_age_backpain_over60 &lt;- xtabs(~Rueckenschmerz_3Monate + AgeOver60, data = ship_valid_backpain)
+tab_age_backpain_over70 &lt;- xtabs(~Rueckenschmerz_3Monate + AgeOver70, data = ship_valid_backpain)
+tab_age_backpain_over80 &lt;- xtabs(~Rueckenschmerz_3Monate + AgeOver80, data = ship_valid_backpain)
+print(tab_age_backpain_over60)</code></pre>
+<pre><code>##                       AgeOver60
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1  1028  481
+##                      2   683  342</code></pre>
+<pre class="r"><code>print(tab_age_backpain_over70)</code></pre>
+<pre><code>##                       AgeOver70
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1  1345  164
+##                      2   918  107</code></pre>
+<pre class="r"><code>print(tab_age_backpain_over80)</code></pre>
+<pre><code>##                       AgeOver80
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1  1495   14
+##                      2  1013   12</code></pre>
+<pre class="r"><code># Calculate the inverse Odds ratio, since &quot;false&quot; is the first entry in the table
+print(calculate_odds_inverse(tab_age_backpain_over60))</code></pre>
+<pre><code>## [1] 0.9344295</code></pre>
+<pre class="r"><code>print(calculate_odds_inverse(tab_age_backpain_over70))</code></pre>
+<pre><code>## [1] 1.046117</code></pre>
+<pre class="r"><code>print(calculate_odds_inverse(tab_age_backpain_over80))</code></pre>
+<pre><code>## [1] 0.790524</code></pre>
+<p>The Odds for having back pain is therefore nearly equal for subjects older or junger than 60 years and 70 years. The odds ratio drops for subjects older than 80 years, but this may be due to the rather low sample size of only 26 subjects older than 80 years.</p>
 </div>
 <div id="anova-for-back-pain-and-body-fat" class="section level2">
 <h2>ANOVA for <code>Back Pain</code> and <code>Body Fat</code></h2>
@@ -237,6 +276,34 @@ boxplot(ship_age_valid_backpain_bodyfat$BIA_KOERPERFETT_KORR_IN_PROZ ~ ship_age_
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>The p value is very low with a high F value, therefore we can accept the alternative hypothesis.</p>
+<p>Now we look at the Odds ratios for subjects with high body fat percentages. The WHO does not depict clear cutoff values for obesity levels w.r.t. body fat percentage. Therefore, we use cutoff values from a peer reviewed clinical paper correlating obesity to cardiometabolic dysregulation and cardiovascular mortality.</p>
+<ul>
+<li>A. Romero-Corral, V. K. Somers, J. Sierra-Johnson, Y. Korenfeld, S. Boarin, J. Korinek, M. D. Jensen, G. Parati, F. Lopez-Jimenez. “Normal weight obesity: a risk factor for cardiometabolic dysregulation and cardiovascular mortality”, vol. 31, no. 6, pp. 737–746, 2010.</li>
+</ul>
+<pre class="r"><code># Calculate Odds Ratios for Males and Females
+ship_valid_backpain_bodyfat &lt;- mutate(ship_valid_backpain_bodyfat, FatPercenteageOver23 = BIA_KOERPERFETT_KORR_IN_PROZ &gt; 23.15)
+ship_valid_backpain_bodyfat &lt;- mutate(ship_valid_backpain_bodyfat, FatPercenteageOver33 = BIA_KOERPERFETT_KORR_IN_PROZ &gt; 33.3)
+# SEX == 1 is Male and SEX == 2 is Female
+tab_bodyfat_backpain_females &lt;- xtabs(~Rueckenschmerz_3Monate + FatPercenteageOver33, data = filter(ship_valid_backpain_bodyfat, SEX == 2))
+tab_bodyfat_backpain_males &lt;- xtabs(~Rueckenschmerz_3Monate + FatPercenteageOver23, data = filter(ship_valid_backpain_bodyfat, SEX == 1))
+print(tab_bodyfat_backpain_females)</code></pre>
+<pre><code>##                       FatPercenteageOver33
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1   321  439
+##                      2   189  227</code></pre>
+<pre class="r"><code>print(tab_bodyfat_backpain_males)</code></pre>
+<pre><code>##                       FatPercenteageOver23
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1   311  415
+##                      2   293  301</code></pre>
+<pre class="r"><code># Calculate the inverse Odds ratio, since &quot;false&quot; is the first entry in the table
+odds_bodyfat_backpain_females &lt;- calculate_odds_inverse(tab_bodyfat_backpain_females)
+odds_bodyfat_backpain_males &lt;- calculate_odds_inverse(tab_bodyfat_backpain_males)
+print(odds_bodyfat_backpain_females)</code></pre>
+<pre><code>## [1] 1.138664</code></pre>
+<pre class="r"><code>print(odds_bodyfat_backpain_males)</code></pre>
+<pre><code>## [1] 1.298939</code></pre>
+<p>The odds for obese women to have back pain as oposed to non-obese women are 1.1386636. For Men, this effect is even stronger, having an odds ratio of 1.2989392 to have back pain with obesity.</p>
 </div>
 <div id="anova-for-back-pain-and-bmi" class="section level2">
 <h2>ANOVA for <code>Back Pain</code> and <code>BMI</code></h2>
@@ -268,7 +335,22 @@ title(main = &quot;Top: Age by BMI; Bottom: Subjects older than 60 years&quot;, 
 <pre><code>##                         Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## Rueckenschmerz_3Monate   1      0   0.242   0.014  0.906
 ## Residuals              821  14219  17.319</code></pre>
-<p>There is no correlation with <code>BMI</code> and <code>Back Pain</code> observable in the data.</p>
+<p>There is no correlation with <code>BMI</code> and <code>Back Pain</code> observable in the data. This is followed up with calculating the Odds Ratios of back pain with obese subjects according to the BMI.</p>
+<pre class="r"><code># Create Obesity BMI feature
+ship_valid_backpain &lt;- mutate(ship_valid_backpain, BMIObese = BMI &gt;= 30)
+
+# SEX == 1 is Male and SEX == 2 is Female
+tab_bmi_backpain &lt;- xtabs(~Rueckenschmerz_3Monate + BMIObese, data = ship_valid_backpain)
+print(tab_bmi_backpain)</code></pre>
+<pre><code>##                       BMIObese
+## Rueckenschmerz_3Monate FALSE TRUE
+##                      1  1041  468
+##                      2   750  275</code></pre>
+<pre class="r"><code># Calculate the inverse Odds ratio, since &quot;false&quot; is the first entry in the table
+odds_bmi_backpain &lt;- calculate_odds_inverse(tab_bmi_backpain)
+print(odds_bmi_backpain)</code></pre>
+<pre><code>## [1] 1.226094</code></pre>
+<p>Therefore, obese subjects show an odds ratio of 1.2260938 to have back pain.</p>
 </div>
 <div id="anova-for-back-pain-and-body-weight" class="section level2">
 <h2>ANOVA for <code>Back Pain</code> and <code>Body Weight</code></h2>
